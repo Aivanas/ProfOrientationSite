@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Заголовок страницы{% endblock %}</title>
+    {% include '_links.html' %}
+    {% block links %}{% endblock links %}
+</head>
+<body>
+<header>
+    {% block header %}
+    {% endblock %}
+</header>
+
+<main>{% block content %}
+    Контент страницы
+{% endblock %}</main>
+    
+<footer>
+    
+</footer>
+</body>
+</html>
