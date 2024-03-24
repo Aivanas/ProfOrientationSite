@@ -4,14 +4,7 @@
 {% block title %}Авторизация{% endblock %}
 
 {% block header %}
-<nav class="navbar bg-body-tertiary">
-  <div class="container-fluid">
-    <a class="navbar-brand" href="#">
-      <img src="{% static "ProforientationSite/img/logo.svg" %}" alt="Logo" width="30" height="24" class="d-inline-block align-text-top">
-    Образовательная платформа "Груша"      
-    </a>
-  </div>
-</nav>
+{% include "_header.html" %}
 {% endblock %}
 
 {% block content %}
@@ -33,7 +26,7 @@
                             </div>
                             <button type="submit" class="btn btn-primary">Войти</button>
                         </form>
-                        <button type="submit" class="btn btn-primary">Регистрация</button>
+                        <a href="{% url 'register' %}" class="btn btn-primary">Регистрация</a>
                     </div>
                 </div>
             </div>
