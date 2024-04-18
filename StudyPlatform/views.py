@@ -1,8 +1,10 @@
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import logout
+from django.contrib.auth.views import LoginView
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views.generic import CreateView
 
+from StudyPlatform.forms import RegisterUserForm, LoginForm
 from StudyPlatform.utils import DataMixin
 
 
@@ -17,18 +19,14 @@ def about_page(request):
     return render(request, 'about.html')
 
 
-def login_page(request):
-    return render(request, 'login.html')
-
-
 def checkCookies():
     return False
 
 
 class RegisterUser(DataMixin, CreateView):
-    form_class = UserCreationForm
+    form_class = RegisterUserForm
     template_name = 'register.html'
-    success_url = reverse_lazy('login_page')
+    success_url = reverse_lazy('login')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -36,3 +34,22 @@ class RegisterUser(DataMixin, CreateView):
         return dict(list(context.items()) + list(c_def.items()))
     def get_context_url(self):
         return reverse_lazy('main')
+
+class LoginUser(DataMixin, LoginView):
+    form_class = LoginForm
+    template_name = 'login.html'
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        c_def = self.get_user_context(title="Авторизация")
+        return dict(list(context.items()) + list(c_def.items()))
+
+    def get_success_url(self):
+        if self.request.user.has_perm():
+            return reverse_lazy('main')
+        return reverse_lazy('home')
+
+
+def logout_user(request):
+    logout(request)
+    return redirect('login')
