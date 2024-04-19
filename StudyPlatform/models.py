@@ -1,18 +1,27 @@
+from random import random
+
 from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractUser, PermissionsMixin
 from django.db import models
-
-class CustomUser(AbstractUser):
-    email = models.EmailField(("email address"), blank=False, unique=True, null=False)
+from django.utils.text import slugify
 
 
-class CustomUserManager(BaseUserManager):
+class User(AbstractUser):
+    email = models.EmailField("адрес электронной почты", blank=False, unique=True, null=False)
+    REQUIRED_FIELDS = ['email']
+
+
+class UserManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):
         if not email:
             raise ValueError('The Email field must be set')
         email = self.normalize_email(email)
         user = self.model(email=email, **extra_fields)
         user.set_password(password)
+        username = slugify(email)[:30]
+        while self.model.objects.filter(username=username).exists():
+            username = slugify(email + str(random.randint(100, 999)))[:30]
+        user.username = username
         user.save(using=self._db)
         return user
 

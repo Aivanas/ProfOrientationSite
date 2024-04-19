@@ -32,8 +32,10 @@ class RegisterUser(DataMixin, CreateView):
         context = super().get_context_data(**kwargs)
         c_def = self.get_user_context(title="Регистрация")
         return dict(list(context.items()) + list(c_def.items()))
+
     def get_context_url(self):
         return reverse_lazy('main')
+
 
 class LoginUser(DataMixin, LoginView):
     form_class = LoginForm
@@ -45,9 +47,9 @@ class LoginUser(DataMixin, LoginView):
         return dict(list(context.items()) + list(c_def.items()))
 
     def get_success_url(self):
-        if self.request.user.has_perm():
-            return reverse_lazy('main')
-        return reverse_lazy('home')
+        if self.request.user.is_staff == 1:
+            return reverse_lazy('TeacherApp:main')
+        return reverse_lazy('about')
 
 
 def logout_user(request):

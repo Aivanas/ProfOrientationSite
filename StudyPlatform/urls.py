@@ -12,5 +12,5 @@ urlpatterns = [
     path('login/', LoginUser.as_view(), name='login'),
     path('logout/', logout_user, name='logout'),
     path('register/', RegisterUser.as_view(), name='register'),
-    path('teacher/', include('TeacherApp.urls')),
+    path('teacher/', include('TeacherApp.urls', namespace="TeacherApp")),
 ]
