@@ -1,4 +1,26 @@
 {% extends 'base.html' %}
+{% load static %}
+{% include '_links.html' %}
 {% block title %}
     Главная учителя
+{% endblock %}
+{% block head %}
+<link rel="stylesheet" href="{% static 'TeacherApp/css/Main.css' %}">
+<link rel="stylesheet" href="{% static 'ProforientationSite/css/Navbar.css' %}">
+{% endblock %}
+{% block header %}
+    {% include '_header.html' %}
+{% endblock %}
+{% block content %}
+    <section>
+    <div class="list-container">
+        <ul>
+         {% for user in students %}
+             <li>
+             <a href="#">{{ user.first_name }} {{ user.last_name }}</a>
+             </li>
+            {% endfor %}
+        </ul>
+    </div>
+    </section>
 {% endblock %}

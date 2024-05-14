@@ -1,6 +1,9 @@
 from django import forms
-from django.contrib.auth.forms import AuthenticationForm, UserCreationForm, UserChangeForm
+from django.contrib.auth import authenticate
+from django.contrib.auth.forms import AuthenticationForm, UserCreationForm, UserChangeForm, UsernameField
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
+from django.utils.text import capfirst
 
 from StudyPlatform.models import User
 
@@ -18,18 +21,13 @@ class UserChangeForm(UserChangeForm):
 
 
 class LoginForm(AuthenticationForm):
-    username = None
-    email = forms.EmailInput()
-    password = forms.CharField(label="Пароль", widget=forms.PasswordInput())
-    remember_me = forms.BooleanField(required=False, initial=False)
-    def __init__(self, request=None, *args, **kwargs):
-        """
-        The 'request' parameter is set for custom auth use by subclasses.
-        The form data comes in via the standard 'data' kwarg.
-        """
-        self.request = request
-        self.user_cache = None
-        super().__init__(*args, **kwargs)
+    username = UsernameField(widget=forms.TextInput(attrs={"autofocus": True}), label="Логин")
+    password = forms.CharField(
+        label=("Пароль"),
+        strip=False,
+        widget=forms.PasswordInput(attrs={"autocomplete": "current-password"}),
+    )
+
 
 
 class RegisterUserForm(UserCreationForm):

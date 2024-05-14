@@ -1,12 +1,24 @@
 {% load static %}
 {% block header %}
+    <link rel="stylesheet" href="{% static 'ProforientationSite/css/Navbar.css' %}">
 <nav class="navbar navbar-light bg-light">
   <a class="navbar-brand" href="{% url 'main' %}">
       <img src="{% static "ProforientationSite/img/logo.svg" %}" alt="Logo" width="30" height="24" class="d-inline-block align-text-top">
     Образовательная платформа "Груша"      
     </a>
-    
-    <a class="btn btn-outline-success my-2 my-sm-0" href="{% url 'login' %}">Войти</a>
-
+    {% if user != null %}
+        <div class="navbar-user">
+             <div class="dropdown">
+              <button class="dropbtn">{{ user_first_name }} {{ user_last_name }}</button>
+              <div class="dropdown-content">
+                <a href="{% url 'profile' %}">Профиль</a>
+                <a href="#">Настройки</a>
+                <a href="{% url 'logout' %}">Выйти из аккаунта</a>
+              </div>
+            </div>
+        </div>
+    {% else %}
+        <a class="btn btn-outline-success my-2 my-sm-0" href="{% url 'login' %}">Войти</a>
+{% endif %}
 </nav>
 {% endblock %}
