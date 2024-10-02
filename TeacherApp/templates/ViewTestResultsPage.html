@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+    Результаты теста: {{ test.name }}
+{% endblock %}
+{% block content %}
+    <section class="section-container">
+        <div class="container">
+            <h1 class="mt-4">Результаты теста: {{ test.name }}</h1>
+            {% for result in results %}
+                <div class="card mb-3">
+                    <div class="card-header">
+                        {{ result.user.first_name }} {{ result.user.last_name }}
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        {% for answer in result.answers %}
+                            <li class="list-group-item">
+                                <strong>Вопрос:</strong> {{ answer.question }}<br>
+                                <strong>Ответ:</strong> {{ answer.choice }}<br>
+                                {% if answer.correct %}
+                                    <strong>Правильность:</strong> {{ answer.correct|yesno:"Да,Нет" }}
+                                {% endif %}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+{% endblock %}

@@ -1,19 +1,26 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="ru">
 <head>
+{% block head %}
     <meta charset="UTF-8">
     <title>{% block title %}Заголовок страницы{% endblock %}</title>
     {% include '_links.html' %}
+{% endblock %}
 </head>
-<body>
-<header>
-    {% block header %}
-    {% endblock %}
-</header>
 
-<main>{% block content %}
+{% block links %}
+
+
+{% endblock %}
+{% block header %}
+{% endblock %}
+<body>
+<main>
+    {% block content %}
     Контент страницы
-{% endblock %}</main>
+    {% endblock %}
+</main>
     
 <footer>
     

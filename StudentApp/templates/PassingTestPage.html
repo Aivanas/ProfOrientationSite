@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+    Выполнение теста
+{% endblock %}
+{% block content %}
+    <section class="section-container">
+        <div class="container">
+            <h1 class="mt-4">Выполнение теста: {{ test.name }}</h1>
+            <form method="post">
+                {% csrf_token %}
+                {% for question_with_choices in questions_with_choices %}
+                    <div class="form-group">
+                        <label>{{ question_with_choices.question.question_text }}</label>
+                        {% for choice in question_with_choices.choices %}
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="question_{{ question_with_choices.question.id }}" id="question_{{ question_with_choices.question.id }}_{{ forloop.counter }}" value="{{ choice.id }}">
+                                <label class="form-check-label" for="question_{{ question_with_choices.question.id }}_{{ forloop.counter }}">
+                                    {% if choice.image %}
+                                        <img src="{{ choice.image }}" alt="Choice Image" style="max-width: 100px;"><br>
+                                    {% endif %}
+                                    {{ choice.text }}
+                                </label>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+                <button type="submit" class="btn btn-primary mt-3">Отправить ответы</button>
+            </form>
+        </div>
+    </section>
+{% endblock %}

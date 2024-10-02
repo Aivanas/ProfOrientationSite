@@ -1,8 +1,14 @@
 from django import forms
-from django.contrib.auth.forms import AuthenticationForm, UserCreationForm, UserChangeForm
+from django.contrib.auth import authenticate
+from django.contrib.auth.forms import AuthenticationForm, UserCreationForm, UserChangeForm, UsernameField
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
+from django.utils.text import capfirst
 
-from StudyPlatform.models import User
+from StudyPlatform.models import User, Question, Test, Choice, UserTests
+
+
+#Question
 
 
 class UserCreationForm(UserCreationForm):
@@ -18,35 +24,101 @@ class UserChangeForm(UserChangeForm):
 
 
 class LoginForm(AuthenticationForm):
-    username = None
-    email = forms.EmailInput()
-    password = forms.CharField(label="Пароль", widget=forms.PasswordInput())
-    remember_me = forms.BooleanField(required=False, initial=False)
-    def __init__(self, request=None, *args, **kwargs):
-        """
-        The 'request' parameter is set for custom auth use by subclasses.
-        The form data comes in via the standard 'data' kwarg.
-        """
-        self.request = request
-        self.user_cache = None
-        super().__init__(*args, **kwargs)
+    username = UsernameField(widget=forms.TextInput(attrs={"autofocus": True}), label="Логин")
+    password = forms.CharField(
+        label=("Пароль"),
+        strip=False,
+        widget=forms.PasswordInput(attrs={"autocomplete": "current-password"}),
+    )
 
 
 class RegisterUserForm(UserCreationForm):
-    email = forms.CharField(label='Электронная почта', widget=forms.TextInput(attrs={'class': "form-input"}))
-    id_first_name = forms.CharField(label='Имя', widget=forms.TextInput(attrs={'class': "form-input"}))
-    id_last_name = forms.CharField(label='Фамилия', widget=forms.TextInput(attrs={'class': "form-input"}))
+    username = forms.CharField(label='Логин', widget=forms.TextInput(attrs={'class': "form-input"}))  # Добавлено поле для логина
+    email = forms.CharField(label='Электронная почта', widget=forms.EmailInput(attrs={'class': "form-input"}))
+    first_name = forms.CharField(label='Имя', widget=forms.TextInput(attrs={'class': "form-input"}))
+    last_name = forms.CharField(label='Фамилия', widget=forms.TextInput(attrs={'class': "form-input"}))
     password1 = forms.CharField(label='Пароль', widget=forms.PasswordInput(attrs={'class': "form-input"}))
     password2 = forms.CharField(label='Повторите пароль', widget=forms.PasswordInput(attrs={'class': "form-input"}))
 
     class Meta:
         model = User
-        fields = ('id_first_name', 'id_last_name', 'email', 'password1', 'password2')
+        fields = ('username', 'first_name', 'last_name', 'email', 'password1', 'password2')  # Логин добавлен в список полей
         widgets = {
-            'id_first_name': forms.TextInput(attrs={'class': 'form-input'}),
-            'id_last_name': forms.TextInput(attrs={'class': 'form-input'}),
+            'username': forms.TextInput(attrs={'class': 'form-input'}),
+            'first_name': forms.TextInput(attrs={'class': 'form-input'}),
+            'last_name': forms.TextInput(attrs={'class': 'form-input'}),
             'email': forms.EmailInput(attrs={'class': 'form-input'}),
             'password1': forms.PasswordInput(attrs={'class': 'form-input'}),
-            'password2': forms.PasswordInput(attrs={'class': 'form-input'})
+            'password2': forms.PasswordInput(attrs={'class': 'form-input'}),
         }
-        field_order = ['id_first_name', 'id_last_name', 'email', 'password1', 'password2']
+        field_order = ['username', 'first_name', 'last_name', 'email', 'password1', 'password2']  # Логин первым
+
+    def clean_username(self):
+        username = self.cleaned_data.get('username')
+        if User.objects.filter(username=username).exists():
+            raise forms.ValidationError("Пользователь с таким логином уже существует.")
+        return username
+
+
+# class CreateChoiceForm(forms.Form):
+#     text = forms.CharField(label='Текст ответа')
+#     image = forms.ImageField()
+#
+#
+#
+# class QuestionForm(forms.Form):
+#     # model = Question
+#     question_type = forms.ChoiceField( label="Тип вопроса",
+#         choices=[
+#             (1, 'Выбор одного варианта'),
+#             (2, 'Выбор нескольких вариантов'),
+#             (3, 'Текстовый ответ')
+#         ]
+#     )
+#     question_text = forms.CharField(label="Текст вопроса")
+
+
+# class QuestionForm(forms.Form):
+#     text = forms.CharField(label="Ввод текста")
+#     image = forms.ImageField(label="Фотка")
+#
+# class Answer(forms.Form):
+#     text = forms.CharField()
+#     image = forms.ImageField()
+#
+# class TestForm(forms.Form):
+#     name = forms.CharField(label="Название теста")
+#     class Meta:
+#         model = TestModel
+#         fields = ('name', 'is_active')
+
+
+
+class TestForm(forms.ModelForm):
+    class Meta:
+        model = Test
+        fields = ['name', 'test_type']
+    def clean_name(self):
+        name = self.cleaned_data.get("name")
+        if Test.objects.filter(name=name).exists():
+            raise forms.ValidationError("Тест с таким названием уже существует")
+        return name
+
+class QuestionForm(forms.ModelForm):
+    class Meta:
+        model = Question
+        fields = ['question_text', 'question_type']
+
+class ChoiceForm(forms.ModelForm):
+    class Meta:
+        model = Choice
+        fields = ['choice_text', 'choice_image', 'is_correct']
+
+
+class UserTestForm(forms.ModelForm):
+    user = forms.ModelChoiceField(queryset=User.objects.all(), label="Пользователь")
+    test = forms.ModelChoiceField(queryset=Test.objects.all(), label="Тест")
+
+    class Meta:
+        model = UserTests
+        fields = ['user', 'test']

@@ -1,14 +1,23 @@
 {% extends 'base.html' %}
+{% include '_links.html' %}
+{% block title %}
+    Регистрация
+{% endblock %}
+{% block header %}
+    {% include '_header.html' %}
+{% endblock %}
 {% block content %}
-<h1>{{ title }}</h1>
-
-<form method="post">
+<div class="container-md mb-3">
+    <h1>{{ title }}</h1>
+    <form method="post">
     {% csrf_token %}
     {% for f in form %}
     <p> <label class="form-label" for="{{ f.id_for_label }}"> {{ f.label }} </label> {{ f }} </p>
     <div class="form-error">{{ f.errors }}</div>
     {% endfor %}
-    <button type="submit">Регистрация</button>
+    <button class="btn-outline-success" type="submit">Регистрация</button>
 </form>
-
+</div>
 {% endblock %}
+
+

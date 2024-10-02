@@ -1,12 +1,32 @@
 {% load static %}
 {% block header %}
-<nav class="navbar navbar-light bg-light">
-  <a class="navbar-brand" href="{% url 'main' %}">
-      <img src="{% static "ProforientationSite/img/logo.svg" %}" alt="Logo" width="30" height="24" class="d-inline-block align-text-top">
-    Образовательная платформа "Груша"      
-    </a>
-    
-    <a class="btn btn-outline-success my-2 my-sm-0" href="{% url 'login' %}">Войти</a>
-
-</nav>
+    <div class="container">
+    <header class="d-flex flex-wrap justify-content-center py-3 mb-4 border-bottom">
+  <a class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none" href="{% url 'main' %}">
+      <img src="{% static "ProforientationSite/img/logo.svg" %}" alt="Logo" width="30" height="24" class="be me-2">
+   <span class="fs-4">
+       Образовательная платформа "Маями"
+   </span>
+  </a>
+    <ul class="nav nav-pills">
+        <li class="nav-item">
+            {% if user.is_authenticated %}
+            <div class="btn-group" role="group">
+                <button class="btn btn-dark dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"
+                        type="button" data-bs-toggle="dropdown" id="UserDropdownMenu" aria-expanded="false">
+                    {{ user.first_name }} {{ user.last_name }}
+                </button>
+              <ul class="dropdown-menu" aria-labelledby="UserDropdownMenu">
+                <li><a class="dropdown-item" href="{% url 'profile' %}">Профиль</a></li>
+                <li><a class="dropdown-item" href="#">Настройки</a></li>
+                <li><a class="dropdown-item" href="{% url 'logout' %}">Выйти из аккаунта</a></li>
+              </ul>
+            </div>
+            {% else %}
+                 <a class="btn btn-dark" href="{% url 'login' %}">Войти</a>
+            {% endif %}
+        </li>
+    </ul>
+    </header>
+    </div>
 {% endblock %}

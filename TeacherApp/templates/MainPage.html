@@ -1,4 +1,155 @@
 {% extends 'base.html' %}
+{% load static %}
+{% include '_links.html' %}
 {% block title %}
     Главная учителя
+{% endblock %}
+{% block header %}
+    {% include '_header.html' %}
+{% endblock %}
+{% block content %}
+      <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+    <section class="section-container">
+    <div class="d-flex">
+        <div class="p-2 flex-fill">
+            <div class="col">
+                <div class="list-container">
+                    <ul class="list-group">
+                        {% for user in students %}
+                            <li class="list-group-item">
+                                <div class="container-md">
+                                    <p class="text-start">{{ user.first_name }} {{ user.last_name }}</p>
+                                    <ul class="list-group list-group-numbered mb-3">
+                                        {% for test in userTests %}
+                                            {% if test.user == user %}
+                                            <ul class="list-group-item d-flex justify-content-between align-items-start">
+                                                <div class="ms-2 me-auto">
+                                                    <div class="fw-bold">{{ test.test.name }}</div>
+                                                    {% if test.is_done %}
+                                                        <a href="{% url 'TeacherApp:view_results' test.id %}"
+                                                           class="btn btn-outline-success btn-sm">Просмотреть результаты</a>
+                                                        {% else %}
+                                                        Не выполнен
+                                                        {% endif %}
+                                                </div>
+                                            {% if test.is_done %}
+                                                        <span class="badge bg-success rounded-pill">Выполнен</span>
+                                                        {% else %}
+                                                        <span class="badge bg-danger rounded-pill">Не выполнен</span>
+                                                        {% endif %}
+                                            </ul>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </ul>
+                                    <button type="button" class="btn btn-outline-primary btn-sm assign-test-btn"
+                                    data-toggle="modal" data-target="#assignTestModal" data-user-id="{{ user.id }}">
+                                        Назначить тест
+                                    </button>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="p-2 flex-fill">
+            <div class="col">
+                <div class="list-container mb-3">
+                    <div class="list-group">
+                        {% for test in tests %}
+                            <a href="{% url 'TeacherApp:edit_test' test.id %}" class="list-group-item list-group-item-action">
+                                {{ test.name }}
+                            </a>
+                        {% endfor %}
+                    </div>
+                </div>
+                <button type="button" class="btn btn-dark mb-3" id="newTestBtn"
+                        data-toggle="modal" data-target="#createTestModal">Создать новый тест</button>
+            </div>
+        </div>
+    </div>
+    </section>
+
+    <div class="modal fade" id="createTestModal" tabindex="-1" role="dialog" aria-labelledby="createTestModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="createTestModalLabel">Добавление нового теста</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form method="post" action="{% url 'TeacherApp:create_test' %}">
+                        {% csrf_token %}
+                        {{ form.as_p }}
+                        <button type="submit" class="btn btn-primary">Добавить</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="assignTestModal" tabindex="-1" role="dialog" aria-labelledby="assignTestModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="assignTestModalLabel">Назначить тест пользователю</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="assignTestForm">
+                        {% csrf_token %}
+                        <input type="hidden" id="userId" name="user">
+                        <div class="form-group">
+                            <label for="testId">Тест</label>
+                            <select class="form-control" id="testId" name="test">
+                                {% for test in tests %}
+                                    <option value="{{ test.id }}">{{ test.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div id="assignFormErrors" class="alert alert-danger" style="display: none;"></div>
+                        <button type="button" class="btn btn-primary" id="submitAssignTest">Назначить тест</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function(){
+            $('.assign-test-btn').click(function(){
+                let userId = $(this).data('user-id');
+                $('#userId').val(userId);
+            });
+
+            $('#submitAssignTest').click(function(){
+                $.ajax({
+                    url: "{% url 'TeacherApp:assign_test' %}",
+                    type: "POST",
+                    data: $('#assignTestForm').serialize(),
+                    success: function(data) {
+                        if (data.status === 'success') {
+                            alert('Тест "' + data.test + '" успешно назначен пользователю "' + data.user + '".');
+                            $('#assignTestModal').modal('hide');
+                        } else {
+                            let errors = data.errors;
+                            let errorText = '';
+                            for (let key in errors) {
+                                if (errors.hasOwnProperty(key)) {
+                                    errorText += errors[key].join(', ') + '<br>';
+                                }
+                            }
+                            $('#assignFormErrors').html(errorText).show();
+                        }
+                    }
+                });
+            });
+        });
+    </script>
 {% endblock %}

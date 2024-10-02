@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% load static %}
+{% include '_links.html' %}
+{% block title %}
+    Добавление вопроса
+{% endblock %}
+{% block header %}
+    {% include '_header.html' %}
+{% endblock %}
+{% block content %}
+<body>
+    <h1>Добавление вопроса к тесту: {{ test.name }}</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Добавить вопрос</button>
+    </form>
+</body>
+{% endblock %}

@@ -1,0 +1,9 @@
+{% block content %}
+<body>
+    <form method="post">
+        {% csrf_token %}
+        {{ choice_form.as_p }}
+        <button type="submit">Добавить вариант ответа</button>
+    </form>
+</body>
+{% endblock %}

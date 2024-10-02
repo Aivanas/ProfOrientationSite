@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+    Доступные тесты
+{% endblock %}
+{% block content %}
+    <section class="section-container">
+        <div class="container">
+            <h1 class="mt-4">Доступные тесты</h1>
+            <div class="list-group">
+                {% for test in tests %}
+                    <a href="{% url 'StudentApp:take_test' test.id %}" class="list-group-item list-group-item-action">
+                    {{ test.name }}
+                        {% if test.is_done %}
+                            Выполнен
+                        {% else %}
+                            Не выполнен
+                        {% endif %}
+                    </a>
+                    {% empty %}
+                    Невыполненных тестов нет
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+{% endblock %}

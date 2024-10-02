@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block title %}
+    Создание нового теста
+{% endblock %}
+{% block head %}
+    {% include '_header.html' %}
+{% endblock %}
+
+{% block content %}
+   <h1>Создание теста</h1>
+    <<button id="add-form-btn">Add Form</button>
+    <div id="form-container"></div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            var formCount = 0;
+
+            $('#add-form-btn').click(function() {
+                $.ajax({
+                    url: "{% url 'TeacherApp:get_form' %}",  // Убедитесь, что этот URL-адрес правильный
+                    method: "GET",
+                    success: function(response) {
+                        formCount++;
+                        var formHtml = '<form id="form-' + formCount + '" method="post">' + response.form_html + '</form>';
+                        $('#form-container').append(formHtml);
+                    }
+                });
+            });
+        });
+    </script>
+{% endblock %}

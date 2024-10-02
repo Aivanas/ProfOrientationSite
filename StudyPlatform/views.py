@@ -9,18 +9,22 @@ from StudyPlatform.utils import DataMixin
 
 
 def main(request):
-    if checkCookies():
-        return render(request, 'tutorPage.html')
+    if request.user.is_authenticated:
+        if request.user.is_staff:
+            return redirect('/teacher')
+        else:
+            return redirect('/student')
     else:
         return redirect('/about')
 
 
 def about_page(request):
+    print(request.user)
     return render(request, 'about.html')
 
 
-def checkCookies():
-    return False
+
+
 
 
 class RegisterUser(DataMixin, CreateView):
@@ -52,6 +56,15 @@ class LoginUser(DataMixin, LoginView):
         return reverse_lazy('about')
 
 
+def show_user_profile(request):
+    if request.user.is_authenticated:
+        context = {
+            'user':request.user
+        }
+        return render(request, 'Profile.html', context=context)
+    else:
+        return
+
 def logout_user(request):
     logout(request)
-    return redirect('login')
+    return redirect('about')
