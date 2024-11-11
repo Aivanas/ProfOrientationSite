@@ -15,5 +15,5 @@ urlpatterns = [
     path('question/<int:question_id>/update/', update_question_ajax, name='update_question_ajax'),
     path('choice/<int:choice_id>/update/', update_choice_ajax, name='update_choice_ajax'),
     path('assign-test/', assign_test, name='assign_test'),
-    path('view_results/<int:test_id>/', view_results, name='view_results'),
+    path('view_results/<int:user_test_id>/', view_results, name='view_results'),
 ]

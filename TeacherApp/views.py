@@ -209,23 +209,22 @@ def assign_test(request):
 
 
 @login_required
-def view_results(request, test_id):
-    test = get_object_or_404(Test, id=test_id)
-    user_tests = UserTests.objects.filter(test=test, is_done=True)
-
+def view_results(request, user_test_id):
+    user_test = get_object_or_404(UserTests, id=user_test_id, is_done=True)
+    test = get_object_or_404(Test, id=user_test.test.id)
     results = []
-    for user_test in user_tests:
-        user_answers = UserTestAnswers.objects.filter(user=user_test.user, test=test)
-        answers = []
-        for answer in user_answers:
-            answers.append({
-                'question': answer.choice.question.question_text,
-                'choice': answer.choice.choice_text,
-                'correct': answer.choice.is_correct
-            })
-        results.append({
-            'user': user_test.user,
-            'answers': answers
+
+    user_answers = UserTestAnswers.objects.filter(user=user_test.user, test=test)
+    answers = []
+    for answer in user_answers:
+        answers.append({
+            'question': answer.choice.question.question_text,
+            'choice': answer.choice.choice_text,
+            'correct': answer.choice.is_correct
         })
+    results.append({
+        'user': user_test.user,
+        'answers': answers
+    })
 
     return render(request, 'ViewTestResultsPage.html', {'test': test, 'results': results})
