@@ -14,7 +14,7 @@
                 <div class="card">
                     <div class="card-header">Вход в систему</div>
                     <div class="card-body">
-                        <form method="post" action="{% url 'login' %}">
+                        <form method="post" action="{% url 'base-login' %}">
                             {% csrf_token %}
                             {% for f in form %}
                                 <p> <label class="form-label" for="{{ f.id_for_label }}"> {{ f.label }} </label> {{ f }} </p>

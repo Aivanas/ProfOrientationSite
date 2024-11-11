@@ -53,7 +53,7 @@ class LoginUser(DataMixin, LoginView):
     def get_success_url(self):
         if self.request.user.is_staff == 1:
             return reverse_lazy('TeacherApp:main')
-        return reverse_lazy('about')
+        return reverse_lazy('StudentApp:available_tests')
 
 
 def show_user_profile(request):

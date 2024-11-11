@@ -42,11 +42,11 @@ class User(AbstractUser):
     )
     date_joined = models.DateTimeField(("дата регистрации"), default=timezone.now)
 
-    objects = UserManager()
+    #objects = UserManager()
+    #EMAIL_FIELD = "email"
+    #USERNAME_FIELD = "username"
+    #REQUIRED_FIELDS = ["email"]
 
-    EMAIL_FIELD = "email"
-    USERNAME_FIELD = "username"
-    REQUIRED_FIELDS = ["email"]
 
     class Meta(AbstractUser.Meta):
         verbose_name = ("Пользователь")
@@ -66,18 +66,6 @@ class User(AbstractUser):
 
     def email_user(self, subject, message, from_email=None, **kwargs):
         send_mail(subject, message, from_email, [self.email], **kwargs)
-
-
-#class TestModel(models.Model):
- #   name = models.CharField(max_length=255)
-  #  is_active = models.BooleanField()
-   # slug = models.SlugField(unique=True, editable=False)
-
-    #def save(self, *args, **kwargs):
-     #   self.slug = slugify(self.name)
-      #  super().save(*args, **kwargs)
-
-
 
 class Test(models.Model):
     name = models.CharField(max_length=255, unique=True)

@@ -60,40 +60,6 @@ class RegisterUserForm(UserCreationForm):
         return username
 
 
-# class CreateChoiceForm(forms.Form):
-#     text = forms.CharField(label='Текст ответа')
-#     image = forms.ImageField()
-#
-#
-#
-# class QuestionForm(forms.Form):
-#     # model = Question
-#     question_type = forms.ChoiceField( label="Тип вопроса",
-#         choices=[
-#             (1, 'Выбор одного варианта'),
-#             (2, 'Выбор нескольких вариантов'),
-#             (3, 'Текстовый ответ')
-#         ]
-#     )
-#     question_text = forms.CharField(label="Текст вопроса")
-
-
-# class QuestionForm(forms.Form):
-#     text = forms.CharField(label="Ввод текста")
-#     image = forms.ImageField(label="Фотка")
-#
-# class Answer(forms.Form):
-#     text = forms.CharField()
-#     image = forms.ImageField()
-#
-# class TestForm(forms.Form):
-#     name = forms.CharField(label="Название теста")
-#     class Meta:
-#         model = TestModel
-#         fields = ('name', 'is_active')
-
-
-
 class TestForm(forms.ModelForm):
     class Meta:
         model = Test
