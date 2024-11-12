@@ -48,7 +48,10 @@
             <p>
                 {{ question.question_text }}
             </p>
-            <div class="container-md">
+                <a href="{% url 'TeacherApp:delete_question_ajax' question_id=question.id %}">
+                    <button type="button" class="btn btn-outline-danger btn-sm md-2">Удалить вопрос</button>
+                </a>
+                <div class="container-md">
                 <ul id="choicesList" class="mb-3">
                     {% for choice in choices%}
                         {% if choice.question == question %}

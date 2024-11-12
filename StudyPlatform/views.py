@@ -30,7 +30,7 @@ def about_page(request):
 class RegisterUser(DataMixin, CreateView):
     form_class = RegisterUserForm
     template_name = 'register.html'
-    success_url = reverse_lazy('login')
+    success_url = reverse_lazy('base-login')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.utils.text import capfirst
 
-from StudyPlatform.models import User, Question, Test, Choice, UserTests
+from StudyPlatform.models import User, Question, Test, Choice, UserTests, TestResultComment
 
 
 #Question
@@ -88,3 +88,8 @@ class UserTestForm(forms.ModelForm):
     class Meta:
         model = UserTests
         fields = ['user', 'test']
+
+class CommentForm(forms.ModelForm):
+    class Meta:
+        model = TestResultComment
+        fields = ['commentText']

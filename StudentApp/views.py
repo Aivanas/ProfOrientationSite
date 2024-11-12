@@ -2,14 +2,23 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404, redirect
 
 from StudentApp.forms import TestForm
-from StudyPlatform.models import UserTests, Test, UserTestAnswers, Choice
+from StudyPlatform.models import UserTests, Test, UserTestAnswers, Choice, TestResultComment
 
 
 @login_required
 def available_tests(request):
+    done_user_tests = UserTests.objects.filter(user=request.user, is_done=True)
     user_tests = UserTests.objects.filter(user=request.user, is_done=False)
     tests = [user_test.test for user_test in user_tests]
-    return render(request, 'StudentMainPage.html', {'tests': tests})
+    comments = TestResultComment.objects.filter(user_test__in=done_user_tests)
+
+    context = {
+        'done_user_tests': done_user_tests,
+        'user_tests': user_tests,
+        'tests': tests,
+        'comments': comments,
+    }
+    return render(request, 'StudentMainPage.html', context)
 
 
 @login_required
@@ -66,3 +75,30 @@ def submit_test(request, test_id):
             return redirect('StudentApp:available_tests')
     return redirect('StudentApp:take_test', test_id=test_id)
 
+
+@login_required
+def view_results(request, user_test_id):
+    user_test = get_object_or_404(UserTests, id=user_test_id, is_done=True)
+    test = get_object_or_404(Test, id=user_test.test.id)
+    comments = TestResultComment.objects.filter(user_test=user_test)
+    results = []
+    user_answers = UserTestAnswers.objects.filter(user=user_test.user, test=test)
+    answers = []
+    for answer in user_answers:
+        answers.append({
+            'question': answer.choice.question.question_text,
+            'choice': answer.choice.choice_text,
+            'correct': answer.choice.is_correct
+        })
+    results.append({
+        'user': user_test.user,
+        'answers': answers
+    })
+
+
+    return render(request, 'WatchingResultsPage.html',
+                  {
+                    'test': test,
+                   'results': results,
+                   "comments": comments,
+                   })

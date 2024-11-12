@@ -5,20 +5,37 @@
 {% endblock %}
 {% block content %}
     <section class="section-container">
-        <div class="container">
-            <h1 class="mt-4">Доступные тесты</h1>
+        <div class="container-md">
+            <h2 class="mt-4">Доступные тесты</h2>
             <div class="list-group">
-                {% for test in tests %}
-                    <a href="{% url 'StudentApp:take_test' test.id %}" class="list-group-item list-group-item-action">
-                    {{ test.name }}
-                        {% if test.is_done %}
-                            Выполнен
-                        {% else %}
+                {% for user_test in user_tests %}
+                        {% if not user_test.is_done %}
+                            <a href="{% url 'StudentApp:take_test' user_test.test.id %}" class="list-group-item list-group-item-action">
+                            {{ user_test.test.name }}
                             Не выполнен
+                            </a>
                         {% endif %}
-                    </a>
-                    {% empty %}
+                {% empty %}
                     Невыполненных тестов нет
+                {% endfor %}
+            </div>
+        </div>
+        <div class="container-md">
+            <h2 class="mt-4">Пройденные тесты</h2>
+            <div class="list-group">
+                {% for test in done_user_tests %}
+                    <div class="row g-0 border rounded overflow-hidden flex-md-row shadow-sm h-md-250 position-relative">
+                    <div class="col p-4 d-flex flex-column position-static">
+                        <strong class="d-inline-block mb-2 text-success">Пройден</strong>
+                        <h3 class="mb-0">{{ test.test.name }}</h3>
+                        <div class="mb-1 text-body-secondary">
+                            Просмотреть комментарии
+                        </div>
+                        <a class="stretched-link" href="{% url "StudentApp:stud_view_results" test.id %}"></a>
+                    </div>
+                    </div>
+                {% empty %}
+                    Выполненных тестов нет
                 {% endfor %}
             </div>
         </div>

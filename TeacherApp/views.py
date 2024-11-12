@@ -6,9 +6,9 @@ from django.template.loader import render_to_string
 from django.utils.text import slugify
 from django.views.generic import TemplateView, ListView
 
-from StudyPlatform.forms import TestForm, QuestionForm, ChoiceForm, UserTestForm
+from StudyPlatform.forms import TestForm, QuestionForm, ChoiceForm, UserTestForm, CommentForm
 # from StudyPlatform.forms import QuestionForm
-from StudyPlatform.models import User, Test, Question, Choice, UserTests, UserTestAnswers
+from StudyPlatform.models import User, Test, Question, Choice, UserTests, UserTestAnswers, TestResultComment
 from StudyPlatform.utils import DataMixin
 
 
@@ -212,8 +212,8 @@ def assign_test(request):
 def view_results(request, user_test_id):
     user_test = get_object_or_404(UserTests, id=user_test_id, is_done=True)
     test = get_object_or_404(Test, id=user_test.test.id)
+    comments = TestResultComment.objects.filter(user_test=user_test)
     results = []
-
     user_answers = UserTestAnswers.objects.filter(user=user_test.user, test=test)
     answers = []
     for answer in user_answers:
@@ -227,4 +227,21 @@ def view_results(request, user_test_id):
         'answers': answers
     })
 
-    return render(request, 'ViewTestResultsPage.html', {'test': test, 'results': results})
+    if request.method == 'POST':
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.user = request.user
+            comment.user_test = user_test
+            comment.save()
+
+    else:
+        form = CommentForm()
+
+    return render(request, 'ViewTestResultsPage.html',
+                  {
+                    'test': test,
+                   'results': results,
+                   "comments": comments,
+                      'form': form,
+                   })

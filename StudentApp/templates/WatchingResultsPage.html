@@ -36,21 +36,12 @@
             <div class="card text-bg-primary mb-3" style="max-width: 18rem;">
             <div class="card-header">{{ comment.user.first_name }} {{ comment.user.last_name }}</div>
             <div class="card-body">
-            {% comment %}<h5 class="card-title">Primary card title</h5>{% endcomment %}
                 <p class="card-text">{{ comment.commentText }}</p>
             </div>
             </div>
         {% endfor %}
     </div>
     {% endif %}
-
-    <div class="container-md">
-        <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-            <button type="submit" class="btn btn-info">Отправить комментарий</button>
-    </form>
-    </div>
 
     </section>
 

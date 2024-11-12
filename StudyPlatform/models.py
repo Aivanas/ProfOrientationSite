@@ -42,10 +42,6 @@ class User(AbstractUser):
     )
     date_joined = models.DateTimeField(("дата регистрации"), default=timezone.now)
 
-    #objects = UserManager()
-    #EMAIL_FIELD = "email"
-    #USERNAME_FIELD = "username"
-    #REQUIRED_FIELDS = ["email"]
 
 
     class Meta(AbstractUser.Meta):
@@ -75,7 +71,6 @@ class Question(models.Model):
     QUESTION_TYPES = [
         ('single_choice', 'Одиночный выбор'),
         ('multiple_choice', 'Множественный выбор'),
-        # Добавьте другие типы вопросов здесь
     ]
     test = models.ForeignKey(Test, on_delete=models.CASCADE, related_name='questions')
     question_text = models.TextField()
@@ -98,3 +93,9 @@ class UserTestAnswers(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="userAnswersUser")
     test = models.ForeignKey(Test, on_delete=models.CASCADE, related_name="userAnswerTest")
     choice = models.ForeignKey(Choice, on_delete=models.CASCADE, related_name="userAnswerChoice")
+
+class TestResultComment(models.Model):
+    user_test = models.ForeignKey(UserTests, on_delete=models.CASCADE, related_name="testResultCommentUserTest")
+    commentText = models.TextField()
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="testResultCommentUserTest")
+
